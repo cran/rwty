@@ -1,7 +1,7 @@
 Package: rwty
 Type: Package
 Title: R We There Yet? Visualizing MCMC Convergence in Phylogenetics
-Version: 1.0.0
+Version: 1.0.1
 Author: Dan Warren <dan.l.warren@gmail.com>,
     Anthony Geneva <anthony.geneva@gmail.com>,
     Rob Lanfear <rob.lanfear@gmail.com>
@@ -11,12 +11,12 @@ Description: Implements various tests, visualizations, and metrics
     and automates many of the functions of the AWTY package in the R
     environment.
 License: GPL-2
-Depends: R (>= 3.0.1), ape, ggplot2,
+Depends: R (>= 3.3.0), ape, ggplot2,
 Imports: reshape2, phangorn, coda, viridis, grid, plyr, ggdendro,
         GGally, parallel,
 Suggests: knitr,
 RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2016-06-10 22:09:29 UTC; dwarren
+Packaged: 2016-06-20 21:20:14 UTC; danwarren
 Repository: CRAN
-Date/Publication: 2016-06-11 09:29:05
+Date/Publication: 2016-06-22 05:42:18
