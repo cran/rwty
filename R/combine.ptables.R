@@ -2,17 +2,19 @@
 #' 
 #' This function is automatically called by some of the plot functions.
 #'
-#' @param chains A list of rwty.trees objects. 
+#' @param chains A list of rwty.chain objects. 
 #' @param burnin The number of trees to eliminate as burnin 
 #'
-#' @return ptable A data frame of likelihood values and model parameters for the supplied rwty.trees objects
+#' @return ptable A data frame of likelihood values and model parameters for the supplied rwty.chain objects
 #'
 #' @keywords MCMC, phylogenetics, convergence, awty, rwty
 #'
 #' @export combine.ptables
 #' @examples
+#' \dontrun{
 #' data(fungus)
 #' combine.ptables(fungus, burnin=20)
+#' }
 
 combine.ptables <- function(chains, burnin){
   
@@ -21,7 +23,11 @@ combine.ptables <- function(chains, burnin){
   # N is a vector of chain lengths
   N <- unlist(lapply(chains, function(x) length(x$trees)))
   
-  if(any((N - burnin) < 1 || burnin < 0)){
+  if(burnin < 0){
+    stop(sprintf('Burnin must be between 0 and the length of your chains (%s)', N))
+  }
+  
+  if(any((N - burnin) < 1)){
     stop(sprintf('Burnin must be between 0 and the length of your chains (%s)', N))
   }
   

@@ -7,7 +7,7 @@
 treespace(chains, n.points = 100, burnin = 0, fill.color = NA)
 }
 \arguments{
-\item{chains}{A list of 1 or more rwty.trees objects.}
+\item{chains}{A list of 1 or more rwty.chain objects.}
 
 \item{n.points}{The minimum number of points you want in your plot.}
 
@@ -24,11 +24,12 @@ and uses multi-dimensional scaling to collapse it to a two-
 dimensional tree space for plotting.
 }
 \examples{
+\dontrun{
 data(fungus)
 treespace(fungus, n.points=50, burnin=20, fill.color="LnL")
+}
 }
 \keyword{mds,}
 \keyword{multi-dimensional}
 \keyword{scaling}
 \keyword{treespace,}
-

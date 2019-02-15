@@ -6,7 +6,7 @@
 #' If required, the behaviour can be changed to plot the path distance of each tree from the last tree of the burnin
 #' of each chain, using the independent.chains option. This is not recommended in most cases.
 #'
-#' @param chains A set of rwty.trees objects.
+#' @param chains A set of rwty.chain objects.
 #' @param burnin The number of trees to omit as burnin. 
 #' @param facet TRUE/FALSE denoting whether to make a facet plot (default TRUE)
 #' @param free_y TRUE/FALSE to turn free y scales on the facetted plots on or off (default FALSE). Only works if facet = TRUE.
@@ -55,18 +55,33 @@ makeplot.topology <- function(chains, burnin = 0, facet=TRUE, free_y = FALSE, in
         distances = tree.distances.from.first(chains, burnin, focal.tree = focal.tree, treedist = treedist)        
     }
 
+    # Calculate CIs either by chain or overall
+    in.ci <- function(x){
+      as.numeric(x > quantile(x, c(0.025)) &  x < quantile(x, c(0.975)))
+    }
+    
+    if(facet){
+      fill <- unlist(lapply(unique(distances$chain), function(x) in.ci(distances[distances$chain == x,"topological.distance"])))
+    } else {
+      fill <- in.ci(distances[,"topological.distance"])
+    }
+    fill[which(fill == 0)] = 'red'  
+    fill[which(fill == 1)] = 'blue'
 
     trace.plot =  ggplot(data = distances, aes(x=generation, y=topological.distance)) + 
                         geom_line(aes(colour = chain)) + 
                         ggtitle("Tree topology trace") +
                         xlab("Generation") +
-                        ylab("Topological Distance of Tree from Focal Tree")
+                        ylab("Topological Distance of Tree from Focal Tree") +
+                        scale_color_viridis(discrete = TRUE, begin = 0.2, end = .8, option = "C") +
+                        scale_fill_viridis(discrete = TRUE, begin = 0.2, end = .8, option = "C") +
                         theme(axis.title.x = element_text(vjust = -.5), axis.title.y = element_text(vjust=1.5))
 
     density.plot =  ggplot(data = distances, aes(x=topological.distance)) + 
-                        geom_density(aes(colour = chain, fill = chain), alpha = 0.1) + 
+                        geom_histogram(aes(fill = fill)) + 
                         ggtitle("Tree topology trace") +
-                        xlab("Topological Distance of Tree from Focal Tree")
+                        xlab("Topological Distance of Tree from Focal Tree") +
+                        scale_fill_manual(values =plasma(2, end = 0.65), guide = FALSE) +
                         theme(axis.title.x = element_text(vjust = -.5), axis.title.y = element_text(vjust=1.5))
 
     if(facet){ 

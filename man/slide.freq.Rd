@@ -7,7 +7,7 @@
 slide.freq(chains, burnin = 0, window.size = 20)
 }
 \arguments{
-\item{chains}{A list of rwty.trees objects.}
+\item{chains}{A list of rwty.chain objects.}
 
 \item{burnin}{The number of trees to eliminate as burnin. Defaults to zero.}
 
@@ -24,11 +24,12 @@ and calculates the split frequency of clades within that window.  It
 allows users to see whether the chain is visiting different areas of treespace.
 }
 \examples{
+\dontrun{
 data(fungus)
-slide.data <- slide.freq(fungus, burnin=20)
+slide.data <- slide.freq(fungus, burnin=20)\\
+}
 }
 \keyword{MCMC,}
 \keyword{convergence}
 \keyword{frequency,}
 \keyword{split}
-

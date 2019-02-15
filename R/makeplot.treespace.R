@@ -2,7 +2,7 @@
 #' 
 #' This function will take list of rwty.chains objects and produce plots of chains in treespace.
 #'
-#' @param chains A list of one or more rwty.trees objects
+#' @param chains A list of one or more rwty.chain objects
 #' @param burnin The number of samples to remove from the start of the chain as burnin
 #' @param n.points The number of points on each plot
 #' @param fill.color The name of any column in your parameter file that you would like to use as a fill colour for the points of the plot.
@@ -55,8 +55,14 @@ makeplot.treespace <- function(chains, burnin = 0, n.points = 100,  fill.color =
       stop("You need at least two points to make a meaningful treespace plot")
     }
     
-    if(n.points > (length(chains[[1]]$trees) - burnin)) {
+    if("rwty.chain" %in% class(chains)){
+      if(n.points > (length(chains$trees) - burnin)) {
         stop("The number of trees (after removing burnin) is smaller than the number of points you have specified")
+      }
+    } else {
+      if(n.points > (length(chains[[1]]$trees) - burnin)) {
+        stop("The number of trees (after removing burnin) is smaller than the number of points you have specified")
+      }
     }
 
     if(comparisons > 1000000){

@@ -2,7 +2,7 @@
 #' 
 #' Plots parameter values over the length of the MCMC chain
 #'
-#' @param chains A set of rwty.trees objects.
+#' @param chains A set of rwty.chain objects.
 #' @param burnin The number of trees to omit as burnin. 
 #' @param parameter The column name of the parameter to plot.
 #' @param facet Boolean denoting whether to make a facet plot.
@@ -14,8 +14,10 @@
 #'
 #' @export makeplot.param
 #' @examples
+#' \dontrun{
 #' data(fungus)
 #' makeplot.param(fungus, burnin=20, parameter="pi.A.")
+#' }
 
 makeplot.param <- function(chains, burnin = 0, parameter = "LnL", facet=TRUE, free_y=FALSE){ 
 
@@ -34,15 +36,31 @@ makeplot.param <- function(chains, burnin = 0, parameter = "LnL", facet=TRUE, fr
         names(chains) = labels
         ptable = combine.ptables(chains, burnin)
         title = paste(parameter, "trace")
+        
+        # Calculate CIs either by chain or overall
+        in.ci <- function(x){
+          as.numeric(x > quantile(x, c(0.025)) &  x < quantile(x, c(0.975)))
+        }
+        
+        if(facet){
+          fill <- unlist(lapply(unique(ptable$chain), function(x) in.ci(ptable[ptable$chain == x,parameter])))
+        } else {
+          fill <- in.ci(ptable[,parameter])
+        }
+        fill[which(fill == 0)] = 'red'  
+        fill[which(fill == 1)] = 'blue'
 
         trace.plot =  ggplot(ptable, aes_string(x="generation", y=parameter)) + 
                         geom_line(aes(colour = chain)) + 
                         ggtitle(title) +
-                        xlab("Generation")
+                        xlab("Generation") + 
+                        scale_color_viridis(discrete = TRUE, end = 0.85) 
+            
 
         density.plot =  ggplot(ptable, aes_string(x=parameter)) + 
-                        geom_density(aes(colour = chain, fill = chain), alpha = 0.1) + 
-                        ggtitle(title)
+                        geom_histogram(aes(fill = fill)) + 
+                        scale_fill_manual(values =plasma(2, end = 0.65), guide = FALSE) +
+                        ggtitle(title) 
 
         if(facet){ 
             if(free_y){

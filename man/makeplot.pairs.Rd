@@ -8,7 +8,7 @@ makeplot.pairs(chains, burnin = 0, treedist = "PD", params = NA,
   strip = 1)
 }
 \arguments{
-\item{chains}{A set of rwty.trees objects.}
+\item{chains}{A list of rwty.chain objects.}
 
 \item{burnin}{The number of trees to omit as burnin.}
 
@@ -46,4 +46,3 @@ makeplot.pairs(salamanders[1], burnin=20, params = c('pi.A.', 'pi.C.', 'pi.G.', 
 \keyword{parameter,}
 \keyword{phylogenetics}
 \keyword{plot,}
-

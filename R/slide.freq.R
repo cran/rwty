@@ -4,7 +4,7 @@
 #' and calculates the split frequency of clades within that window.  It
 #' allows users to see whether the chain is visiting different areas of treespace.
 #'
-#' @param chains A list of rwty.trees objects. 
+#' @param chains A list of rwty.chain objects. 
 #' @param burnin The number of trees to eliminate as burnin. Defaults to zero. 
 #' @param window.size The number of trees to include in each window (note, specified as a number of sampled trees, not a number of generations)
 #'
@@ -16,8 +16,10 @@
 #'
 #' @export slide.freq
 #' @examples
+#' \dontrun{
 #' data(fungus)
-#' slide.data <- slide.freq(fungus, burnin=20)
+#' slide.data <- slide.freq(fungus, burnin=20)\
+#' }
 
 slide.freq <- function(chains, burnin=0, window.size = 20){ 
 

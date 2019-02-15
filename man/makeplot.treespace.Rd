@@ -4,10 +4,11 @@
 \alias{makeplot.treespace}
 \title{Plot chains in treespace.}
 \usage{
-makeplot.treespace(chains, burnin = 0, n.points = 100, fill.color = NA)
+makeplot.treespace(chains, burnin = 0, n.points = 100,
+  fill.color = NA)
 }
 \arguments{
-\item{chains}{A list of one or more rwty.trees objects}
+\item{chains}{A list of one or more rwty.chain objects}
 
 \item{burnin}{The number of samples to remove from the start of the chain as burnin}
 
@@ -54,4 +55,3 @@ names(fungus[[1]]$ptable)
 \keyword{plot,}
 \keyword{rwty}
 \keyword{treespace,}
-

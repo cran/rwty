@@ -7,7 +7,7 @@
 cumulative.freq(chains, burnin = 0, window.size = 20)
 }
 \arguments{
-\item{chains}{A list of rwty.trees objects.}
+\item{chains}{A list of rwty.chain objects.}
 
 \item{burnin}{The number of trees to eliminate as burnin. Defaults to zero.}
 
@@ -22,11 +22,12 @@ windows, and a translation table that converts clade groupings to factors.
 This function calculates the cumulative mean split frequencies of clades as an MCMC progresses.
 }
 \examples{
+\dontrun{
 data(fungus)
 cumulative.data <- cumulative.freq(fungus, burnin=20)
+}
 }
 \keyword{MCMC,}
 \keyword{convergence}
 \keyword{frequency,}
 \keyword{split}
-

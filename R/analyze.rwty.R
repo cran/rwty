@@ -5,7 +5,8 @@ globalVariables(c("lower.95", "upper.95", "lower.75", "upper.75", "Generation", 
                   "ci.upper", "median", "quantile", "median.ess", "ASDSF" ,"Axis" ,"CSF" ,"Gen" ,
                   "as.dist" ,"box" ,"cmdscale" ,"dev.flush" ,"dev.hold" ,"dev.off" ,"ess" ,
                   "optim" ,"pdf" ,"plot" ,"points" ,"read.table" ,"reorder" ,"sampling.interval",
-                  "split.frequency" ,"tail" ,"topo.distance" ,"topological.distance"))
+                  "split.frequency" ,"tail" ,"topo.distance" ,"topological.distance", 
+                  "dev.control"))
 
 #' analyze.rwty, the main interface for rwty analyses and plots.
 #' 
@@ -17,14 +18,15 @@ globalVariables(c("lower.95", "upper.95", "lower.75", "upper.75", "Generation", 
 #' @importFrom reshape2 melt
 #' @importFrom phangorn RF.dist
 #' @importFrom coda effectiveSize mcmc
-#' @importFrom viridis scale_color_viridis viridis
+#' @importFrom viridis scale_color_viridis scale_fill_viridis viridis plasma
 #' @importFrom grid unit
 #' @importFrom plyr ddply summarize . 
 #' @importFrom ggdendro ggdendrogram
 #' @importFrom GGally ggpairs
 #' @importFrom parallel mclapply detectCores
+#' @importFrom utils citation
 #'
-#' @param chains A list of rwty.trees objects. 
+#' @param chains A list of rwty.chain objects. 
 #' @param burnin The number of trees to eliminate as burnin.  Default value is zero.
 #' @param window.size The number of trees to include in each windows of sliding window plots
 #' @param treespace.points The number of trees to plot in the treespace plot. Default is 100 
@@ -39,6 +41,7 @@ globalVariables(c("lower.95", "upper.95", "lower.75", "upper.75", "Generation", 
 #' @param ess.reps The number of replicate analyses to do when calculating the pseudo ESS.
 #' @param treedist the type of tree distance metric to use, can be 'PD' for path distance or 'RF' for Robinson Foulds distance.
 #' @param params A vector of parameters to use when making the parameter correlation plots.  Defaults to the first two columns in the log table.
+#' @param max.sampling.interval The maximum sampling interval to use for generating autocorrelation plots
 #' @param ... Extra arguments to be passed to plotting and analysis functions.
 #'
 #' @return output The output is a list containing the following plots:
@@ -76,72 +79,94 @@ globalVariables(c("lower.95", "upper.95", "lower.75", "upper.75", "Generation", 
 
 
 analyze.rwty <- function(chains, burnin=0, window.size=20, treespace.points = 100, n.clades = 20,
-                           min.freq = 0.0, fill.color = NA, filename = NA, 
-                           overwrite=FALSE, facet=TRUE, free_y=FALSE, autocorr.intervals=100, ess.reps = 20,
-                          treedist = 'PD', params = NA, ...){
+                         min.freq = 0.0, fill.color = NA, filename = NA, 
+                         overwrite=FALSE, facet=TRUE, free_y=FALSE, autocorr.intervals=100, ess.reps = 20,
+                         treedist = 'PD', params = NA, max.sampling.interval = NA, ...){
+  
+  chains <- check.chains(chains)
+  
+  N <- length(chains[[1]]$trees)
+  
+  rwty.params.check(chains, N, burnin, window.size, treespace.points, min.freq, filename, overwrite)
+  
+  # check to see if ptables exist, make related plots
+  if(all(unlist(lapply(chains, function(x) length(x$ptable[,1])))) > 0){ 
+    # plot parameters for all chains
+    parameter.plots <- makeplot.all.params(chains, burnin = burnin, facet=facet, strip = 1)
+    parameter.correlations <- makeplot.pairs(chains, burnin = burnin, params = params, treedist = treedist, strip = 1)
+    names(parameter.correlations) <- paste0(names(parameter.correlations), ".correlations")
+  }
+  else{
+    parameter.plots <- makeplot.topology(chains, burnin = burnin, facet = facet)
+    parameter.correlations <- NA
+  }
+  
+  # plot autocorrelation
+  if(N < 200){
+    autocorr.plot <- NULL
+  } else {
+    autocorr.plot <- makeplot.autocorr(chains, burnin = burnin, autocorr.intervals = autocorr.intervals, facet = facet, max.sampling.interval = max.sampling.interval) 
+  }
+  
+  # plot sliding window sf plots
+  splitfreq.sliding <- makeplot.splitfreqs.sliding(chains, burnin=burnin, n.clades = n.clades, window.size = window.size, facet = facet)
+  acsf.sliding <- makeplot.acsf.sliding(chains, burnin=burnin, window.size = window.size, facet = facet)
+  
+  # plot cumulative sf plots
+  splitfreq.cumulative <- makeplot.splitfreqs.cumulative(chains, burnin=burnin, n.clades = n.clades, window.size = window.size, facet = facet)
+  acsf.cumulative <- makeplot.acsf.cumulative(chains, burnin=burnin, window.size = window.size, facet = facet)
+  
+  # plot treespace for all chains
+  treespace.plots <- makeplot.treespace(chains, n.points = treespace.points, burnin = burnin, fill.color = fill.color)
+  
+  # Add citations for all packages
+  citations <- list(
+    citation('rwty'),
+    citation('ape'),
+    citation('phangorn'),
+    citation('ggplot2'),
+    citation('coda'),
+    citation('viridis'),
+    citation('ggdendro'),
+    citation('GGally'),
+    citation('plyr'),
+    citation('reshape2'),
+    citation('stats')
+  )
+  
+  
+  plots <- c(parameter.plots,
+             parameter.correlations,
+             autocorr.plot,
+             splitfreq.sliding,
+             acsf.sliding,
+             splitfreq.cumulative,
+             acsf.cumulative,
+             treespace.plots)
+  
+  
+  # plot multichain plots when appropriate
+  if(length(chains) > 1){
     
-    chains <- check.chains(chains)
+    asdsf.plot <- makeplot.asdsf(chains, burnin = burnin, window.size = window.size, min.freq = min.freq)
     
-    N <- length(chains[[1]]$trees)
+    splitfreq.matrix.plots <- makeplot.splitfreq.matrix(chains, burnin = burnin)
     
-    rwty.params.check(chains, N, burnin, window.size, treespace.points, min.freq, filename, overwrite)
-    
-    # check to see if ptables exist, make related plots
-    if(all(unlist(lapply(chains, function(x) length(x$ptable[,1])))) > 0){ 
-      # plot parameters for all chains
-      parameter.plots <- makeplot.all.params(chains, burnin = burnin, facet=facet, strip = 1)
-      parameter.correlations <- makeplot.pairs(chains, burnin = burnin, params = params, treedist = treedist, strip = 1)
-      names(parameter.correlations) <- paste0(names(parameter.correlations), ".correlations")
-    }
-    else{
-      parameter.plots <- makeplot.topology(chains, burnin = burnin, facet = facet)
-    }
-
-    # plot autocorrelation
-    autocorr.plot <- makeplot.autocorr(chains, burnin = burnin, autocorr.intervals = autocorr.intervals, facet = facet)
-
-    # plot sliding window sf plots
-    splitfreq.sliding <- makeplot.splitfreqs.sliding(chains, burnin=burnin, n.clades = n.clades, window.size = window.size, facet = facet)
-    acsf.sliding <- makeplot.acsf.sliding(chains, burnin=burnin, window.size = window.size, facet = facet)
-
-    # plot cumulative sf plots
-    splitfreq.cumulative <- makeplot.splitfreqs.cumulative(chains, burnin=burnin, n.clades = n.clades, window.size = window.size, facet = facet)
-    acsf.cumulative <- makeplot.acsf.cumulative(chains, burnin=burnin, window.size = window.size, facet = facet)
-
-    # plot treespace for all chains
-    treespace.plots <- makeplot.treespace(chains, n.points = treespace.points, burnin = burnin, fill.color = fill.color)
-
-
-    plots <- c(parameter.plots,
-               parameter.correlations,
-                autocorr.plot,
-                splitfreq.sliding,
-                acsf.sliding,
-                splitfreq.cumulative,
-                acsf.cumulative,
-                treespace.plots)
-    
-            
-    # plot multichain plots when appropriate
-    if(length(chains) > 1){
-      
-      asdsf.plot <- makeplot.asdsf(chains, burnin = burnin, window.size = window.size, min.freq = min.freq)
-
-      splitfreq.matrix.plots <- makeplot.splitfreq.matrix(chains, burnin = burnin)
-
-      plots <- c(plots, asdsf.plot, splitfreq.matrix.plots)
-    }
-    
-    # Print all to pdf if filename provided
-    if(!is.na(filename)){
-      print(sprintf("Saving plots to file: %s", filename))
-      pdf(file=filename, width = 10, height = 7, ...)
-      print(plots)
-      dev.off()
-    }
-
-    return(plots)
-
+    plots <- c(plots, asdsf.plot, splitfreq.matrix.plots)
+  }
+  
+  plots[["citations"]] <- citations
+  
+  # Print all to pdf if filename provided
+  if(!is.na(filename)){
+    print(sprintf("Saving plots to file: %s", filename))
+    pdf(file=filename, width = 10, height = 7, ...)
+    print(plots)
+    dev.off()
+  }
+  
+  return(plots)
+  
 }
 
 rwty.params.check <- function(chains, N, burnin, window.size, treespace.points, min.freq, filename, overwrite){
@@ -197,19 +222,41 @@ rwty.params.check <- function(chains, N, burnin, window.size, treespace.points, 
 
 
 get.processors <- function(processors){
-    
-    if(Sys.info()["sysname"] == 'Windows'){
-        # mclapply is not supported on windows
-        # so we give a single processor,
-        # in which case mclapply calls fall back
-        # on lapply
-        return(1)
+
+  if(Sys.info()["sysname"] == 'Windows'){
+    # mclapply is not supported on windows
+    # so we give a single processor,
+    # in which case mclapply calls fall back
+    # on lapply
+    return(1)
+  }
+
+  # check for global user-defined variable
+  if(exists('rwty.processors')){
+    # should be an integer
+    if(!is.numeric(rwty.processors)){
+      stop("the global rwty.processors variable must be an integer")
     }
-
-    if(is.null(processors)){ 
-        processors = detectCores(all.tests = FALSE, logical = FALSE)
+    if(rwty.processors%%1==0){
+      available_processors = detectCores(all.tests = FALSE, logical = FALSE)
+      if(rwty.processors > available_processors){
+        rwty.processors = available_processors - 1
+      }
+      if(rwty.processors < 1){
+        rwty.processors = 1
+      }
+      return(rwty.processors)
+    }else{
+      stop("the global rwty.processors variable must be an integer")
     }
+  }
 
-    return(processors)
-
+  
+  if(is.null(processors)){ 
+    available_processors = detectCores(all.tests = FALSE, logical = FALSE)
+    processors = max(c(1, c(available_processors - 1)))
+  }
+  
+  return(processors)
+  
 }

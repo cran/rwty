@@ -4,14 +4,14 @@
 \alias{analyze.rwty}
 \title{analyze.rwty, the main interface for rwty analyses and plots.}
 \usage{
-analyze.rwty(chains, burnin = 0, window.size = 20, treespace.points = 100,
-  n.clades = 20, min.freq = 0, fill.color = NA, filename = NA,
-  overwrite = FALSE, facet = TRUE, free_y = FALSE,
-  autocorr.intervals = 100, ess.reps = 20, treedist = "PD", params = NA,
-  ...)
+analyze.rwty(chains, burnin = 0, window.size = 20,
+  treespace.points = 100, n.clades = 20, min.freq = 0,
+  fill.color = NA, filename = NA, overwrite = FALSE, facet = TRUE,
+  free_y = FALSE, autocorr.intervals = 100, ess.reps = 20,
+  treedist = "PD", params = NA, max.sampling.interval = NA, ...)
 }
 \arguments{
-\item{chains}{A list of rwty.trees objects.}
+\item{chains}{A list of rwty.chain objects.}
 
 \item{burnin}{The number of trees to eliminate as burnin.  Default value is zero.}
 
@@ -40,6 +40,8 @@ analyze.rwty(chains, burnin = 0, window.size = 20, treespace.points = 100,
 \item{treedist}{the type of tree distance metric to use, can be 'PD' for path distance or 'RF' for Robinson Foulds distance.}
 
 \item{params}{A vector of parameters to use when making the parameter correlation plots.  Defaults to the first two columns in the log table.}
+
+\item{max.sampling.interval}{The maximum sampling interval to use for generating autocorrelation plots}
 
 \item{...}{Extra arguments to be passed to plotting and analysis functions.}
 }
@@ -82,4 +84,3 @@ p
 \keyword{plots,}
 \keyword{rwty,}
 \keyword{topology,}
-

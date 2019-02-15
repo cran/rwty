@@ -1,12 +1,12 @@
 #' Plot the Standard Deviation of Split Frequencies over the course of an MCMC.
 #' 
-#' This function takes two or more rwty.trees ojects and returns a plot of ASDSF as the run progresses.  
+#' This function takes two or more rwty.chain ojects and returns a plot of ASDSF as the run progresses.  
 #' The solid line with points shows the Average Standard Deviation of Split Frequences at the current generation
 #' The grey ribbon shows the upper and lower 95% quantiles of the SDSFs at the current generation
 #'
 #'
 #'
-#' @param chains A list of rwty.trees objects. 
+#' @param chains A list of rwty.chain objects. 
 #' @param burnin The number of trees to eliminate as burnin. Defaults to zero. 
 #' @param window.size The number of trees between each point at which the ASDSFs is calculated (note, specified as a number of sampled trees, not a number of generations)
 #' @param min.freq The minimum frequency for a node to be used for calculating ASDSF.
@@ -17,9 +17,11 @@
 #'
 #' @export makeplot.asdsf
 #' @examples
+#' \dontrun{
 #' data(fungus)
 #' p <- makeplot.asdsf(fungus, burnin = 20)
 #' p
+#' }
 
 makeplot.asdsf <- function(chains, burnin = 0, window.size = 20, min.freq = 0.0){
   
@@ -32,15 +34,24 @@ makeplot.asdsf <- function(chains, burnin = 0, window.size = 20, min.freq = 0.0)
   dat = get.asdsfs(slide.freq.list, min.freq)
   
   asdsf.plot <- ggplot(dat, aes(x = as.numeric(as.character(Generation)))) + 
-    geom_ribbon(aes(ymin = min, ymax = lower.95, fill = 14), alpha = 0.30) + 
-    geom_ribbon(aes(ymin = lower.95, ymax = lower.75, fill = 13), alpha = 0.30) +
-    geom_ribbon(aes(ymin = lower.75, ymax = upper.75, fill = 12), alpha = 0.30) +
-    geom_ribbon(aes(ymin = upper.75, ymax = upper.95, fill = 13), alpha = 0.30) + 
-    geom_ribbon(aes(ymin = upper.95, ymax = max, fill = 14), alpha = 0.30) + 
+    geom_line(aes(color = 14, y = min), linetype = 3) + 
+    geom_line(aes(color = 13, y = lower.95), linetype = 2) +
+    geom_line(aes(color = 12, y = lower.75), linetype = 7) +
+    geom_line(aes(color = 12, y = upper.75), linetype = 7) +
+    geom_line(aes(color = 13, y = upper.95), linetype = 2) + 
+    geom_line(aes(color = 14, y = max), linetype = 3) + 
+    geom_ribbon(aes(ymin = min, ymax = lower.95, fill = 14), alpha = 0.50) + 
+    geom_ribbon(aes(ymin = lower.95, ymax = lower.75, fill = 13), alpha = 0.50) +
+    geom_ribbon(aes(ymin = lower.75, ymax = upper.75, fill = 12), alpha = 0.50) +
+    geom_ribbon(aes(ymin = upper.75, ymax = upper.95, fill = 13), alpha = 0.50) + 
+    geom_ribbon(aes(ymin = upper.95, ymax = max, fill = 14), alpha = 0.50) + 
     geom_line(aes(y = ASDSF)) + 
     geom_point(aes(y = ASDSF)) +
+    scale_color_viridis(begin = 0.2, end = .9, option = "D") +
+    scale_fill_viridis(begin = 0.2, end = .9, option = "D") +
     expand_limits(y=0) +
-    theme(legend.position="none") +
+    theme(legend.position="none") +   
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank()) +     
     xlab("Generation") + 
     ylab("Standard Deviation of Split Frequencies") +
     ggtitle("Average Standard Deviation of Split Frequencies") +

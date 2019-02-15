@@ -4,18 +4,18 @@
 \alias{load.trees}
 \title{Custom functions to load tree lists so that rwty can do basic processing on the way in.}
 \usage{
-load.trees(file, type = NA, format = "mb", gens.per.tree = NA, trim = 1,
-  logfile = NA, skip = NA)
+load.trees(file, type = NA, format = "mb", gens.per.tree = NA,
+  trim = 1, logfile = NA, skip = NA)
 }
 \arguments{
 \item{file}{A path to a tree file containing an MCMC chain of trees}
 
 \item{type}{An argument that designates the type of tree file.  If "nexus",
-trees are loaded using ape's read.nexus function.  Otherwise, it's read.tree.
+trees are loaded using ape's \code{\link{read.nexus}} function.  Otherwise, it's \code{\link{read.tree}}.
 If a "format" argument is passed, type will be determined from the format definition.}
 
 \item{format}{File format, which is used to find tree and log files.
-Currently accepted values are "mb" for MrBayes, "beast" for BEAST, and "*beast" for *BEAST.
+Currently accepted values are "mb" for MrBayes, "beast" for BEAST, "*beast" for *BEAST, and "revbayes" for RevBayes.
 If you would like RWTY to understand additional formats, please contact the authors and send us some sample data.}
 
 \item{gens.per.tree}{The number of generations separating trees.  If not provided, RWTY will attempt to calculate it automatically.}
@@ -28,19 +28,21 @@ definition.}
 
 \item{skip}{The number of lines that must be skipped to get to the header of the log file.
 MrBayes, for instance, prints a comment line at the top of the log file, so MrBayes files should be
-read in with a skip value of 1.  If no "skip" value is provided but a "format" is supplied, RWTY will 
+read in with a skip value of 1.  If no "skip" value is provided but a "format" is supplied, RWTY will
 attempt to read logs using the skip value from the format definition.}
 }
 \value{
-output An rwty.trees object containing the multiPhylo and the table of values from the log file if available.
+output An rwty.chain object containing the multiPhylo and the table of values from the log file if available.
 }
 \description{
-Loads trees, looks for a log file of tree likelihoods and parameter values, returns an rwty.trees object containing both
+Loads trees, looks for a log file of tree likelihoods and parameter values, returns an rwty.chain object containing both
 }
 \examples{
 #load.trees(file="mytrees.t", format = "mb")
 }
+\seealso{
+\code{\link{read.tree}}, \code{\link{read.nexus}}
+}
 \keyword{MCMC,}
 \keyword{Phylogenetics,}
 \keyword{load}
-

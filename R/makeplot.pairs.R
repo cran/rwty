@@ -7,7 +7,7 @@
 #' busy. To include parameters of your choice, use the 'parameters' argument. In this function, the topological distance is
 #' calculate from the first tree in every chain.
 #'
-#' @param chains A set of rwty.trees objects.
+#' @param chains A list of rwty.chain objects.
 #' @param burnin The number of trees to omit as burnin. 
 #' @param treedist the type of tree distance metric to use, can be 'PD' for path distance or 'RF' for Robinson Foulds distance
 #' @param params 'NA', 'all', or a vector of column names to include in the plot. 'NA' gives the default behaviour (see above). 'all' plots all columns (watch out!). Choose specific columns by name with a vector.
@@ -48,7 +48,7 @@ makeplot.pairs <- function(chains, burnin = 0, treedist = 'PD', params = NA, str
 
         problems = setdiff(params, param.names)
         if(length(problems)>0){
-            stop(paste(c("The following names you suppied are not parameters in your parameter table ", "'", problems, "'")))
+            stop(paste(c("The following names you suppied are not parameters in your parameter table ", "'", paste(problems, " "), "'")))
         }
         param.names = params
     }
@@ -81,7 +81,6 @@ do.pairs.plot <- function(chain, burnin = 0, params, treedist){
     # this is so that the distances look nicer in the plots
     focal.tree = chains[[1]]$trees[1]
     distances = tree.distances.from.first(chains, burnin, focal.tree = focal.tree, treedist = treedist)        
-
     ptable$topological.distance = distances$topological.distance
 
     points <- function(data, mapping, ...) {
@@ -92,17 +91,29 @@ do.pairs.plot <- function(chain, burnin = 0, params, treedist){
     }
 
     hist <- function(data, mapping, ...) {
-      
-      var = data[,as.character(mapping$x)]
+      if(length(as.character(mapping$x)) > 1){
+        var = data[,as.character(mapping$x[2])]  
+      } else {
+        var = data[,as.character(mapping$x)]
+      }
       lower = quantile(var, c(0.025))
       upper = quantile(var, c(0.975))
-      fill = as.numeric(cut(var, c(lower, upper)))
+      if(lower == upper){
+        ci.width <- round(.025 * length(var))
+        fill = c(rep(NA, ci.width),
+                 rep(1, length(var) - 2 * ci.width),
+                 rep(NA, ci.width))
+      }
+      else{
+        fill = as.numeric(cut(var, c(lower, upper)))
+      }
+      
       fill[which(is.na(fill))] = 'red'  
       fill[which(fill == 1)] = 'blue'
 
       ggplot(data = data, mapping = mapping) + 
         geom_histogram(aes(fill = fill)) +
-        scale_fill_manual(values = c('steelblue', 'red'))
+        scale_fill_manual(values =plasma(2, end = 0.65))
         
     }
 

@@ -1,10 +1,10 @@
 #' Plot the Chaing in Split Frequencies (CSF) in sliding windows over the course of an MCMC.
 #' 
-#' This function takes one or more rwty.trees ojects and returns a plot of CSF within each chain as the MCMC progresses.  
+#' This function takes one or more rwty.chain ojects and returns a plot of CSF within each chain as the MCMC progresses.  
 #' The solid line with points shows the Average Change in Split Frequencies (ACSF) between this window and the previous window
 #' The grey ribbon shows the upper and lower 95% quantiles of the CSFs between this window and the previuos window
 #'
-#' @param chains A list of rwty.trees objects. 
+#' @param chains A list of rwty.chain objects. 
 #' @param burnin The number of trees to eliminate as burnin. Defaults to zero. 
 #' @param window.size The number of trees to include in each window (note, specified as a number of sampled trees, not a number of generations)
 #' @param facet (TRUE/FALSE). TRUE: return a single plot with one facet per chain; FALSE: return a list of individual plots with one plot per chain 
@@ -17,8 +17,10 @@
 #'
 #' @export makeplot.acsf.sliding
 #' @examples
+#' \dontrun{
 #' data(fungus)
 #' makeplot.acsf.sliding(fungus, burnin=20)
+#' }
 
 makeplot.acsf.sliding <- function(chains, burnin = 0, window.size = 20, facet = TRUE){ 
   # plot variation in clade frequencies between windows
@@ -42,8 +44,10 @@ makeplot.acsf.sliding <- function(chains, burnin = 0, window.size = 20, facet = 
       geom_ribbon(aes(ymin = upper.95, ymax = max, fill = Chain), alpha = 0.10) + 
       geom_line(aes(y = ACSF, colour = Chain)) + 
       geom_point(aes(y = ACSF, colour = Chain)) +
-      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-      theme(legend.position="none") +                
+      scale_color_viridis(discrete = TRUE, end = 0.85) +
+      scale_fill_viridis(discrete = TRUE, end = 0.85) +
+      theme(legend.position="none") +   
+      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank()) +              
       expand_limits(y = 0) +
       xlab("Generation") +
       ylab("Change in Split Frequency") + 

@@ -1,12 +1,12 @@
 #' Plots a matrix of split frequency comparisons between multiple MCMC chains.
 #' 
-#' This function takes list of rwty.trees objects, and returns a scatterplot matrix
+#' This function takes list of rwty.chain objects, and returns a scatterplot matrix
 #' in which each plot shows the split frequencies of all clades that appear in one or both 
 #' MCMC chains at least once. In the upper diagonal, we show the correlation between the split
 #' frequencies (Pearson's R), and the Average Standard Deviation of the split frequencies.
 #'
 #'
-#' @param chains A list of rwty.trees objects.
+#' @param chains A list of rwty.chain objects.
 #' @param burnin The number of trees to eliminate as burnin 
 #'
 #' @return output A list of two plots: the first is a matrix of scatterplots, where each point is a clade, and the values are the split frequencies of that clade in the post-burnin trees of each chain. The second plot is a tree of the chains clustered by their ASDSFs.
@@ -15,8 +15,10 @@
 #'
 #' @export makeplot.splitfreq.matrix
 #' @examples
+#' \dontrun{
 #' data(salamanders)
 #' makeplot.splitfreq.matrix(salamanders[1:4], burnin = 20)
+#' }
 
 makeplot.splitfreq.matrix <- function(chains, burnin = 0){
 
@@ -29,9 +31,14 @@ makeplot.splitfreq.matrix <- function(chains, burnin = 0){
 
   dat = dat[,(names(dat) %in% names(chains))] #keep only the chain values 
 
+  pdf(NULL)
+  dev.control(displaylist="enable")
+
   pairs2(dat, lower.panel = panel.smooth, upper.panel = panel.cor, pch = 20, col = rgb(0, 0, 1, 0.2))
   title("Split frequency comparisons")
   splitfreq.matrix = recordPlot()
+
+  invisible(dev.off())
 
   if(all(asdsf  == 0)){
     print("No non-zero ASDSF values, skipping ASDSF tree")  

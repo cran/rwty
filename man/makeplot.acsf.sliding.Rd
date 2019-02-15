@@ -4,10 +4,11 @@
 \alias{makeplot.acsf.sliding}
 \title{Plot the Chaing in Split Frequencies (CSF) in sliding windows over the course of an MCMC.}
 \usage{
-makeplot.acsf.sliding(chains, burnin = 0, window.size = 20, facet = TRUE)
+makeplot.acsf.sliding(chains, burnin = 0, window.size = 20,
+  facet = TRUE)
 }
 \arguments{
-\item{chains}{A list of rwty.trees objects.}
+\item{chains}{A list of rwty.chain objects.}
 
 \item{burnin}{The number of trees to eliminate as burnin. Defaults to zero.}
 
@@ -21,16 +22,17 @@ output A plof of the CSF between sliding windows over all chains
 acsf.plot A ggplot object, or list of ggplot objects
 }
 \description{
-This function takes one or more rwty.trees ojects and returns a plot of CSF within each chain as the MCMC progresses.  
+This function takes one or more rwty.chain ojects and returns a plot of CSF within each chain as the MCMC progresses.  
 The solid line with points shows the Average Change in Split Frequencies (ACSF) between this window and the previous window
 The grey ribbon shows the upper and lower 95% quantiles of the CSFs between this window and the previuos window
 }
 \examples{
+\dontrun{
 data(fungus)
 makeplot.acsf.sliding(fungus, burnin=20)
+}
 }
 \keyword{convergence,}
 \keyword{mcmc,}
 \keyword{phylogenetics,}
 \keyword{uncertainty}
-
