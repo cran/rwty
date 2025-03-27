@@ -4,8 +4,14 @@
 \alias{makeplot.splitfreqs.sliding}
 \title{Plot split frequencies in sliding windows over the course of an MCMC}
 \usage{
-makeplot.splitfreqs.sliding(chains, burnin = 0, n.clades = 20,
-  window.size = 20, facet = TRUE, rank = "ess")
+makeplot.splitfreqs.sliding(
+  chains,
+  burnin = 0,
+  n.clades = 20,
+  window.size = 20,
+  facet = TRUE,
+  rank = "ess"
+)
 }
 \arguments{
 \item{chains}{A list of rwty.chain objects.}
@@ -35,8 +41,6 @@ data(fungus)
 makeplot.splitfreqs.sliding(fungus, burnin = 20, n.clades=25)
 }
 }
-\keyword{mcmc,}
-\keyword{phylogenetics,}
+\keyword{mcmc}
+\keyword{phylogenetics}
 \keyword{plot}
-\keyword{sliding}
-\keyword{window,}

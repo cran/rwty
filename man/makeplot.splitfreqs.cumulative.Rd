@@ -4,8 +4,14 @@
 \alias{makeplot.splitfreqs.cumulative}
 \title{Plot cumulative split frequencies over the course of an MCMC}
 \usage{
-makeplot.splitfreqs.cumulative(chains, burnin = 0, n.clades = 20,
-  window.size = 20, facet = TRUE, rank = "wcsf")
+makeplot.splitfreqs.cumulative(
+  chains,
+  burnin = 0,
+  n.clades = 20,
+  window.size = 20,
+  facet = TRUE,
+  rank = "wcsf"
+)
 }
 \arguments{
 \item{chains}{A list of rwty.chain objects.}
@@ -35,8 +41,6 @@ data(fungus)
 makeplot.splitfreqs.cumulative(fungus, burnin = 20, n.clades=25)
 }
 }
-\keyword{mcmc,}
-\keyword{phylogenetics,}
+\keyword{mcmc}
+\keyword{phylogenetics}
 \keyword{plot}
-\keyword{sliding}
-\keyword{window,}

@@ -4,8 +4,7 @@
 \alias{makeplot.pairs}
 \title{Plotting parameters against each other}
 \usage{
-makeplot.pairs(chains, burnin = 0, treedist = "PD", params = NA,
-  strip = 1)
+makeplot.pairs(chains, burnin = 0, treedist = "PD", params = NA, strip = 1)
 }
 \arguments{
 \item{chains}{A list of rwty.chain objects.}
@@ -41,8 +40,8 @@ makeplot.pairs(salamanders[1], burnin=20, params = 'all')
 makeplot.pairs(salamanders[1], burnin=20, params = c('pi.A.', 'pi.C.', 'pi.G.', 'pi.T.'))
 }
 }
-\keyword{convergence,}
-\keyword{mcmc,}
-\keyword{parameter,}
+\keyword{convergence}
+\keyword{mcmc}
+\keyword{parameter}
 \keyword{phylogenetics}
-\keyword{plot,}
+\keyword{plot}

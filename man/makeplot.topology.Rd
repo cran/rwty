@@ -4,8 +4,15 @@
 \alias{makeplot.topology}
 \title{Plotting parameters}
 \usage{
-makeplot.topology(chains, burnin = 0, facet = TRUE, free_y = FALSE,
-  independent.chains = FALSE, treedist = "PD", approx.ess = TRUE)
+makeplot.topology(
+  chains,
+  burnin = 0,
+  facet = TRUE,
+  free_y = FALSE,
+  independent.chains = FALSE,
+  treedist = "PD",
+  approx.ess = TRUE
+)
 }
 \arguments{
 \item{chains}{A set of rwty.chain objects.}
@@ -38,8 +45,8 @@ data(fungus)
 makeplot.topology(fungus, burnin=20)
 }
 }
-\keyword{convergence,}
-\keyword{mcmc,}
-\keyword{parameter,}
+\keyword{convergence}
+\keyword{mcmc}
+\keyword{parameter}
 \keyword{phylogenetics}
-\keyword{plot,}
+\keyword{plot}

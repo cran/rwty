@@ -4,9 +4,15 @@
 \alias{topological.autocorr}
 \title{Calculate data for autocorrelation plots of tree topologies from MCMC analyses}
 \usage{
-topological.autocorr(chains, burnin = 0, max.sampling.interval = NA,
-  autocorr.intervals = 100, squared = FALSE, treedist = "PD",
-  use.all.samples = FALSE)
+topological.autocorr(
+  chains,
+  burnin = 0,
+  max.sampling.interval = NA,
+  autocorr.intervals = 100,
+  squared = FALSE,
+  treedist = "PD",
+  use.all.samples = FALSE
+)
 }
 \arguments{
 \item{chains}{A list of rwty.chain objects.}
@@ -44,6 +50,5 @@ data(fungus)
 topological.autocorr(fungus, burnin = 20)
 }
 }
-\keyword{autocorrelation,}
+\keyword{autocorrelation}
 \keyword{distance}
-\keyword{path}

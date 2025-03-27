@@ -4,8 +4,13 @@
 \alias{makeplot.param}
 \title{Plotting parameters}
 \usage{
-makeplot.param(chains, burnin = 0, parameter = "LnL", facet = TRUE,
-  free_y = FALSE)
+makeplot.param(
+  chains,
+  burnin = 0,
+  parameter = "LnL",
+  facet = TRUE,
+  free_y = FALSE
+)
 }
 \arguments{
 \item{chains}{A set of rwty.chain objects.}
@@ -30,8 +35,8 @@ data(fungus)
 makeplot.param(fungus, burnin=20, parameter="pi.A.")
 }
 }
-\keyword{convergence,}
-\keyword{mcmc,}
-\keyword{parameter,}
+\keyword{convergence}
+\keyword{mcmc}
+\keyword{parameter}
 \keyword{phylogenetics}
-\keyword{plot,}
+\keyword{plot}

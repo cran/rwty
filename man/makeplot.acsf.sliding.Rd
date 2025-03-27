@@ -4,8 +4,7 @@
 \alias{makeplot.acsf.sliding}
 \title{Plot the Chaing in Split Frequencies (CSF) in sliding windows over the course of an MCMC.}
 \usage{
-makeplot.acsf.sliding(chains, burnin = 0, window.size = 20,
-  facet = TRUE)
+makeplot.acsf.sliding(chains, burnin = 0, window.size = 20, facet = TRUE)
 }
 \arguments{
 \item{chains}{A list of rwty.chain objects.}
@@ -32,7 +31,7 @@ data(fungus)
 makeplot.acsf.sliding(fungus, burnin=20)
 }
 }
-\keyword{convergence,}
-\keyword{mcmc,}
-\keyword{phylogenetics,}
+\keyword{convergence}
+\keyword{mcmc}
+\keyword{phylogenetics}
 \keyword{uncertainty}

@@ -26,10 +26,8 @@ allows users to see whether the chain is visiting different areas of treespace.
 \examples{
 \dontrun{
 data(fungus)
-slide.data <- slide.freq(fungus, burnin=20)\\
+slide.data <- slide.freq(fungus, burnin=20)\
 }
 }
-\keyword{MCMC,}
+\keyword{MCMC}
 \keyword{convergence}
-\keyword{frequency,}
-\keyword{split}
